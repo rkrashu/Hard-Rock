@@ -1,13 +1,12 @@
-const searchSong = () =>{
+const searchSong = async() =>{
     const input = document.getElementById("searchInput").value;
     const url = `https://api.lyrics.ovh/suggest/${input}`
-    fetch(url)
-    .then(res => res.json())
-    .then(data=> {console.log(data.data)
-                displayResult(data.data)
+    try{
+        const res = await fetch(url);
+    const data= await res.json();
+    displayResult(data.data);
     }
-    )
-    .catch(error=> error)
+    catch(error){displayError(`<h1 class="text-danger">Sorry we are currently unavailable. Please try again later.</h1>`)}
 }
 
 const displayResult = songs=>{
@@ -32,19 +31,27 @@ searchResult.appendChild(ResultDiv)
 document.getElementById("searchInput").value = ''
 }
 
-const getLyrics = (artist, song)=>{
+const getLyrics = async(artist, song)=>{
     const url = `https://api.lyrics.ovh/v1/${artist}/${song}`
-    console.log(url)
-    fetch(url)
-    .then(res=>res.json())
-    .then(data=> 
-        {console.log(data.lyrics)
-            displayLyrics(data.lyrics)})
-}
+        try{const res=await fetch(url)
+            const data=await res.json()
+            displayLyrics(data.lyrics)}
+            catch(error){displayError2(`<h3 class="text-danger">Sorry We can't provide the lyrics right now. Please try again later.</h3>`)}
+}   
 
 const displayLyrics = song=> {
 const lyrics= document.getElementById("songLyrics")
 lyrics.innerHTML = `<div>
-<h4 style="color:black;">${song}</h4>
+<h4 style="color:black;"><pre>${song}</pre></h4>
 </div>`
+}
+
+const displayError = error=>{
+    const errorMassage = document.getElementById("error")
+    errorMassage.innerHTML = error;
+}
+
+const displayError2 = error=>{
+    const lyrics1= document.getElementById("songLyrics");
+lyrics1.innerHTML = error;
 }
